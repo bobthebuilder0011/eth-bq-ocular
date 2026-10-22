@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH-BQ: Multi-Ocular Disease Classification</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-sky-500/20 border border-sky-400 flex items-center justify-center text-sky-300 font-bold text-xl">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">ETH-BQ Framework</h1>
+                    <p class="text-xs text-sky-200">Explainable Tri-Hybrid Bilateral Quantum AI for Multi-Ocular Screening</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full font-semibold">
+                    <i class="fa-solid fa-atom mr-1"></i> 8-Qubit VQC Active
+                </span>
+                <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 px-3 py-1 rounded-full font-semibold">
+                    <i class="fa-solid fa-bullseye mr-1"></i> 98.15% Accuracy
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Clinical Input & Case Selector (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
+
+            <!-- Clinical Preset Selector Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-flask-vial text-sky-600 mr-2"></i> Clinical Preset Cases
+                    </h2>
+                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">OIA-ODIR</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">
+                    Select a curated patient cohort sample with validated ophthalmological pathology:
+                </p>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    {% for demo in demo_files %}
+                    <button onclick="loadDemoCase('{{ demo.id }}')"
+                            id="btn-demo-{{ demo.id }}"
+                            class="demo-btn text-left px-3 py-2.5 rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50/50 transition-all flex items-center justify-between text-xs font-semibold text-slate-700">
+                        <span>{{ demo.name }}</span>
+                        <i class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+                <!-- Custom Bilateral / Single Eye Upload Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow">
+                <h2 class="text-base font-bold text-slate-900 flex items-center mb-1">
+                    <i class="fa-solid fa-upload text-sky-600 mr-2"></i> Upload Patient Fundus Photo
+                </h2>
+                <p class="text-xs text-slate-500 mb-4">Upload bilateral OD/OS pair or test any single fundus eye photo:</p>
+
+                <form id="upload-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Right Eye (OD) <span class="text-sky-600">*</span></label>
+                            <input type="file" id="file-od" accept="image/*" class="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 w-full">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Left Eye (OS) <span class="text-slate-400 font-normal">(Optional)</span></label>
+                            <input type="file" id="file-os" accept="image/*" class="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 w-full">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 italic">
+                        *If only one eye is uploaded, contralateral reflection is automatically applied for single-eye screening.
+                    </p>
+                    <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2.5 rounded-xl text-xs transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-microscope"></i>
+                        <span>Run Live Triage Analysis</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Architecture Spec Overview Card -->
+            <div class="bg-slate-900 text-slate-200 rounded-2xl p-6 border border-slate-800 card-shadow text-xs space-y-3">
+                <div class="flex items-center justify-between text-sky-400 font-bold uppercase tracking-wider text-[11px]">
+                    <span>Model Specifications</span>
+                    <span>SRM IST G12E</span>
+                </div>
+                <div class="space-y-1.5 text-slate-300">
+                    <div class="flex justify-between border-b border-slate-800 py-1">
+                        <span class="text-slate-400">Backbone:</span>
+                        <span class="font-semibold text-white">Siamese EfficientNetV2 + SE (r=16)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 py-1">
+                        <span class="text-slate-400">Attention:</span>
+                        <span class="font-semibold text-white">Bilateral Cross-Modal (4 heads, 256d)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 py-1">
+                        <span class="text-slate-400">Quantum Register:</span>
+                        <span class="font-semibold text-emerald-400">8 Qubits (256-dim Hilbert space)</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 py-1">
+                        <span class="text-slate-400">Ansatz:</span>
+                        <span class="font-semibold text-white">L=3 Entangling Layers + CNOT Ladder</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Loss:</span>
+                        <span class="font-semibold text-white">Asymmetric Focal (γ+=0, γ-=4, m=0.05)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Diagnostic Results & Explainability (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+
+            <!-- Diagnostic Triage Header Card -->
+            <div id="result-card" class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow transition-all">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                    <div>
+                        <span class="text-xs uppercase font-bold text-sky-600 tracking-wider">Primary Ophthalmic Triage</span>
+                        <h3 id="diag-title" class="text-2xl font-black text-slate-900 flex items-center mt-1">
+                            Select a sample to begin analysis
+                        </h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block font-medium">Confidence</span>
+                        <span id="diag-confidence" class="text-2xl font-black text-emerald-600">--%</span>
+                    </div>
+                </div>
+
+                <!-- Anatomical Hallmarks Callout -->
+                <div class="mt-4 p-3.5 bg-sky-50/60 rounded-xl border border-sky-100 flex items-start space-x-3">
+                    <i class="fa-solid fa-circle-info text-sky-600 text-sm mt-0.5"></i>
+                    <div>
+                        <h4 class="text-xs font-bold text-sky-900">Clinical Hallmark Correlation</h4>
+                        <p id="diag-hallmarks" class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                            Awaiting image analysis...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Differential Diagnoses List -->
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Differential Diagnoses (Ranked)</span>
+                    <div id="diff-diag-container" class="flex flex-wrap gap-2 text-xs">
+                        <span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">Awaiting analysis...</span>
+                    </div>
+                </div>
+
+                <!-- Latency & Bilateral Symmetry Badges -->
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span id="diag-latency"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Latency: -- ms</span>
+                    <span id="diag-symmetry" class="text-sky-700 font-semibold"><i class="fa-solid fa-arrows-split-up-and-left mr-1"></i> Contralateral Symmetry: --</span>
+                </div>
+
+                <!-- Download PDF Report Button -->
+                <div class="mt-4 pt-3 border-t border-slate-100">
+                    <button id="btn-download-pdf" onclick="downloadReport()"
+                        class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold py-2.5 px-4 rounded-xl transition-colors duration-150"
+                        disabled>
+                        <i class="fa-solid fa-file-pdf"></i>
+                        Download Full Clinical PDF Report
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center mt-1.5">
+                        Includes disease symptoms, pathophysiology, ETH-BQ methodology, GradCAM++ maps &amp; management plan
+                    </p>
+                </div>
+            </div>
+
+            <!-- Grad-CAM++ Saliency Maps Side-by-Side Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-fire text-amber-500 mr-2"></i> Grad-CAM++ Anatomical Saliency Localization
+                    </h3>
+                    <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-semibold">
+                        Jet Colormap (α = 0.55)
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- OD Right Eye -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                            <span>Right Eye (OD)</span>
+                            <span class="text-slate-400 font-normal">Nasal Disc</span>
+                        </div>
+                        <div class="relative rounded-xl overflow-hidden bg-slate-950 aspect-square border border-slate-200 flex items-center justify-center">
+                            <img id="img-gradcam-od" src="" class="w-full h-full object-cover hidden" alt="OD Grad-CAM++">
+                            <span id="placeholder-od" class="text-xs text-slate-400">OD Saliency Map</span>
+                        </div>
+                    </div>
+
+                    <!-- OS Left Eye -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                            <span>Left Eye (OS)</span>
+                            <span class="text-slate-400 font-normal">Temporal Macula</span>
+                        </div>
+                        <div class="relative rounded-xl overflow-hidden bg-slate-950 aspect-square border border-slate-200 flex items-center justify-center">
+                            <img id="img-gradcam-os" src="" class="w-full h-full object-cover hidden" alt="OS Grad-CAM++">
+                            <span id="placeholder-os" class="text-xs text-slate-400">OS Saliency Map</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8-Class Probability Spectrum Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow">
+                <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center">
+                    <i class="fa-solid fa-chart-bar text-sky-600 mr-2"></i> 8-Class Diagnostic Confidence Spectrum
+                </h3>
+                <div id="prob-bars" class="space-y-2.5">
+                    {% for name in classes %}
+                    <div>
+                        <div class="flex justify-between text-xs font-medium text-slate-700 mb-1">
+                            <span>{{ name }}</span>
+                            <span id="val-prob-{{ name }}">0.0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div id="bar-prob-{{ name }}" class="bg-sky-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 5-Stage Preprocessing Pipeline Visualizer -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 card-shadow">
+                <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center">
+                    <i class="fa-solid fa-layer-group text-sky-600 mr-2"></i> 5-Stage Bio-Inspired Mathematical Pipeline
+                </h3>
+                <p class="text-xs text-slate-500 mb-3">
+                    Visualizing Perona-Malik Anisotropic PDE Diffusion (κ=15), L*a*b* CLAHE (τ=2.0), and Unsharp Sharpening (α=1.5):
+                </p>
+                <div class="grid grid-cols-5 gap-2 text-center" id="stages-container">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-600 block">1. Raw</span>
+                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <img id="stage-1" src="" class="w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-600 block">2. ROI Crop</span>
+                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <img id="stage-2" src="" class="w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-600 block">3. PDE Diff</span>
+                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <img id="stage-3" src="" class="w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-600 block">4. CLAHE</span>
+                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <img id="stage-4" src="" class="w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-bold text-slate-600 block">5. Sharp</span>
+                        <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <img id="stage-5" src="" class="w-full h-full object-cover hidden">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-semibold text-slate-700">SRM Institute of Science and Technology, Delhi NCR Campus | Group G12E</p>
+            <p class="mt-1">Rahul Gupta &bull; Divyansh Chauhan &bull; Tulsi Yadav &bull; Diviz Gupta</p>
+            <p class="mt-2 text-slate-400">ETH-BQ Architecture | PyTorch &bull; PennyLane &bull; OpenCV</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script>
+        async function loadDemoCase(demoId) {
+            // Visual feedback on button selection
+            document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('bg-sky-50', 'border-sky-500'));
+            const btn = document.getElementById(`btn-demo-${demoId}`);
+            if (btn) btn.classList.add('bg-sky-50', 'border-sky-500');
+
+            document.getElementById('diag-title').innerText = 'Analyzing Bilateral Context...';
+            document.getElementById('diag-confidence').innerText = '--%';
+
+            try {
+                const response = await fetch('/api/predict_demo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ demo_id: demoId })
+                });
+                const data = await response.json();
+                renderResults(data);
+            } catch (err) {
+                console.error(err);
+                alert('Inference error: ' + err.message);
+            }
+        }
+
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileOd = document.getElementById('file-od').files[0];
+            const fileOs = document.getElementById('file-os').files[0];
+            if (!fileOd && !fileOs) {
+                alert('Please select at least one fundus image to analyze.');
+                return;
+            }
+
+            const formData = new FormData();
+            if (fileOd) formData.append('image_od', fileOd);
+            if (fileOs) formData.append('image_os', fileOs);
+
+            document.getElementById('diag-title').innerText = 'Processing Live Fundus Upload...';
+
+            try {
+                const response = await fetch('/api/predict_upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                renderResults(data);
+            } catch (err) {
+                console.error(err);
+                alert('Upload error: ' + err.message);
+            }
+        });
+
+        function renderResults(data) {
+            // Store for PDF download
+            window.lastDiagnosisData = data;
+            const dlBtn = document.getElementById('btn-download-pdf');
+            if (dlBtn) dlBtn.disabled = false;
+
+            document.getElementById('diag-title').innerText = data.prediction;
+            document.getElementById('diag-confidence').innerText = data.confidence + '%';
+            document.getElementById('diag-hallmarks').innerText = data.clinical_hallmarks;
+            document.getElementById('diag-latency').innerHTML = `<i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Latency: ${data.latency_ms} ms (5-Stage Prep + VQC)`;
+
+            // Render Dynamic Differential Diagnoses
+            const diffContainer = document.getElementById('diff-diag-container');
+            if (data.differential_diagnoses && diffContainer) {
+                diffContainer.innerHTML = data.differential_diagnoses.map((d, idx) => `
+                    <span class="px-2.5 py-1 rounded-lg font-semibold text-xs ${idx === 0 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-slate-100 text-slate-700 border border-slate-200'}">
+                        #${idx+1} ${d.class} (${d.probability}%)
+                    </span>
+                `).join('');
+            }
+
+            // Render Dynamic Bilateral Symmetry
+            const symEl = document.getElementById('diag-symmetry');
+            if (symEl && data.bilateral_symmetry_score !== undefined) {
+                const symVal = (data.bilateral_symmetry_score * 100).toFixed(1);
+                symEl.innerHTML = `<i class="fa-solid fa-arrows-split-up-and-left mr-1"></i> Contralateral Symmetry: <strong>${symVal}%</strong>`;
+            }
+
+            // Render Grad-CAM++ Images
+            const imgOd = document.getElementById('img-gradcam-od');
+            const imgOs = document.getElementById('img-gradcam-os');
+            const phOd = document.getElementById('placeholder-od');
+            const phOs = document.getElementById('placeholder-os');
+
+            imgOd.src = data.gradcam_od;
+            imgOs.src = data.gradcam_os;
+            imgOd.classList.remove('hidden');
+            imgOs.classList.remove('hidden');
+            phOd.classList.add('hidden');
+            phOs.classList.add('hidden');
+
+            // Render 8-Class Probability Spectrum
+            for (const [cls, prob] of Object.entries(data.class_probabilities)) {
+                const bar = document.getElementById(`bar-prob-${cls}`);
+                const val = document.getElementById(`val-prob-${cls}`);
+                if (bar && val) {
+                    bar.style.width = prob + '%';
+                    val.innerText = prob.toFixed(1) + '%';
+                    if (cls === data.prediction) {
+                        bar.classList.remove('bg-sky-500');
+                        bar.classList.add('bg-emerald-500');
+                    } else {
+                        bar.classList.remove('bg-emerald-500');
+                        bar.classList.add('bg-sky-500');
+                    }
+                }
+            }
+
+            // Render 5-Stage Preprocessing Pipeline
+            if (data.od_stages) {
+                setStageImg('stage-1', data.od_stages['1_raw']);
+                setStageImg('stage-2', data.od_stages['2_roi_crop']);
+                setStageImg('stage-3', data.od_stages['3_anisotropic_diffusion']);
+                setStageImg('stage-4', data.od_stages['4_tri_channel_clahe']);
+                setStageImg('stage-5', data.od_stages['5_unsharp_mask']);
+            }
+        }
+
+        function setStageImg(id, src) {
+            const el = document.getElementById(id);
+            if (el && src) {
+                el.src = src;
+                el.classList.remove('hidden');
+            }
+        }
+
+        async function downloadReport() {
+            const data = window.lastDiagnosisData;
+            if (!data) { alert('Please run a diagnosis first.'); return; }
+
+            const btn = document.getElementById('btn-download-pdf');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF...';
+
+            try {
+                const resp = await fetch('/api/generate_report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    throw new Error(err.error || 'PDF generation failed');
+                }
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ETH_BQ_Diagnosis_${data.prediction.replace(/\s+/g,'_')}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                alert('PDF Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        }
+
+        // Auto-load Diabetic Retinopathy case on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDemoCase('diabetes');
+        });
+    </script>
+</body>
+</html>
