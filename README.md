@@ -6,6 +6,13 @@
 
 ---
 
+## Attached Project Files
+
+- **`ANN_Project_Report.pdf`** — Full project research report covering problem formulation, methodology, bilateral cross-attention, quantum variational circuit formulation, and ablation studies.
+- **`ANN_Project_Presentation.pptx`** — Project presentation slides highlighting architecture diagrams, experimental findings, and clinical Grad-CAM++ visualizations.
+
+---
+
 ## Overview
 
 We built an 8-class retinal disease classifier that jointly processes both eyes of a patient (OD + OS) instead of treating them independently. The key idea is that many systemic conditions — diabetic retinopathy, hypertension — show up symmetrically in both eyes, so bilateral context matters a lot.
@@ -48,62 +55,65 @@ pip install -r requirements.txt
 
 ---
 
-## Running the project
+## Running the Project
 
-**Generate synthetic benchmark data:**
+All source code and scripts are organized under `src/`:
+
 ```bash
+# Navigate to the code directory
+cd src
+
+# Generate benchmark data
 python3 data/generate_benchmark_data.py
-```
 
-**Train the model:**
-```bash
+# Train the model
 python3 training/train.py --epochs 50 --batch-size 8
-```
 
-**Evaluate:**
-```bash
+# Evaluate
 python3 training/evaluate.py
-```
 
-**Launch web app:**
-```bash
+# Launch web app
 python3 web_app/app.py
 ```
 Then open `http://localhost:5001` in your browser.
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
 eth-bq-ocular/
-├── data/
-│   ├── class_mapping.py          # disease class definitions
-│   ├── dataset.py                # PyTorch dataset for bilateral pairs
-│   ├── generate_benchmark_data.py
-│   └── preprocessing.py          # 5-stage image pipeline
-├── explainability/
-│   └── gradcam_plus_plus.py
-├── models/
-│   ├── backbone.py               # Siamese EfficientNet + SE
-│   ├── bilateral_attention.py    # cross-eye attention
-│   ├── eth_bq.py                 # main model
-│   ├── loss.py                   # Asymmetric Focal Loss
-│   └── quantum_circuit.py        # 8-qubit VQC (PennyLane)
-├── training/
-│   ├── train.py
-│   ├── evaluate.py
-│   └── kfold.py
-├── inference/
-│   ├── predict.py
-│   ├── benchmark.py
-│   └── report_generator.py       # PDF clinical report
-├── web_app/
-│   ├── app.py                    # Flask backend
-│   └── templates/index.html      # dashboard UI
-├── scripts/
-├── checkpoints/                  # saved model weights
-└── requirements.txt
+├── ANN_Project_Report.pdf        # Complete project report
+├── ANN_Project_Presentation.pptx  # Presentation deck
+├── README.md
+├── requirements.txt
+└── src/
+    ├── data/
+    │   ├── class_mapping.py          # disease class definitions
+    │   ├── dataset.py                # PyTorch dataset for bilateral pairs
+    │   ├── generate_benchmark_data.py
+    │   └── preprocessing.py          # 5-stage image pipeline
+    ├── explainability/
+    │   └── gradcam_plus_plus.py      # Grad-CAM++ engine
+    ├── models/
+    │   ├── backbone.py               # Siamese EfficientNet + SE
+    │   ├── bilateral_attention.py    # cross-eye attention
+    │   ├── eth_bq.py                 # main model
+    │   ├── loss.py                   # Asymmetric Focal Loss
+    │   └── quantum_circuit.py        # 8-qubit VQC (PennyLane)
+    ├── training/
+    │   ├── train.py
+    │   ├── evaluate.py
+    │   └── kfold.py
+    ├── inference/
+    │   ├── predict.py
+    │   ├── benchmark.py
+    │   └── report_generator.py       # PDF clinical report
+    ├── web_app/
+    │   ├── app.py                    # Flask backend
+    │   └── templates/index.html      # dashboard UI
+    ├── scripts/
+    └── checkpoints/                  # metrics and training history
 ```
 
 ---
@@ -114,15 +124,3 @@ eth-bq-ocular/
 - If you don't have a GPU, training will be slow — we ran it for ~50 min on an RTX 4090. CPU training works fine but takes longer.
 - The web app lets you upload your own fundus images (single eye or both) and get a downloadable PDF diagnostic report.
 - `autoray` must be pinned to `<0.8` for PennyLane 0.38 compatibility.
-
----
-
-## Requirements
-
-See `requirements.txt`. Main dependencies:
-- PyTorch ≥ 2.0
-- PennyLane 0.38
-- timm (EfficientNet)
-- OpenCV
-- Flask
-- ReportLab (PDF generation)

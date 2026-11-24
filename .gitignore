@@ -14,17 +14,22 @@ venv/
 env/
 .venv/
 
-# Checkpoints / large binary files
+# Large checkpoints / temporary outputs
+*.pth
 checkpoints/*.pth
-checkpoints/*.png
-checkpoints/*.pdf
+src/checkpoints/*.pth
+*.tmp
+*.log
 
 # Keep metrics json
 !checkpoints/training_history.json
 !checkpoints/evaluation_metrics.json
+!src/checkpoints/training_history.json
+!src/checkpoints/evaluation_metrics.json
 
-# Data - benchmark images are generated locally
+# Generated data
 data/benchmark/
+src/data/benchmark/
 
 # macOS
 .DS_Store
@@ -36,9 +41,6 @@ data/benchmark/
 *.swp
 *.swo
 
-# Extracted assets from PPT/PDF (not needed in repo)
+# Extracted assets cache
 extracted_assets/
-
-# Temp
-*.log
-*.tmp
+src/extracted_assets/
